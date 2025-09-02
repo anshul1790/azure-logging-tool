@@ -82,14 +82,10 @@ class AzureHubLoggingAgent:
 
     def _call_agent(self, state: MessagesState):
         logger.info("Calling agent with %d messages", len(state["messages"]))
-        # Use the messages directly without environment injection
-        input_messages = state["messages"]
-        response = self.agent_executor.invoke({
-            "input": input_messages[-1].content if input_messages else ""
-        })
+        response = self.agent_executor.invoke({"input": state["messages"]})
         output = response.get("output", "").strip()
         logger.info("Agent response: %s", output[:100])
-        return {"messages": input_messages + [AIMessage(content=output)]}
+        return {"messages": state["messages"] + [AIMessage(content=output)]}
 
     def _safe_call_agent(self, state: MessagesState):
         try:
@@ -110,10 +106,10 @@ class AzureHubLoggingAgent:
 
     def get_history(self) -> list[str]:
         """Returns the current message history as plain text."""
-        checkpoint = self.memory.get({"configurable": {"thread_id": self.thread_id}})
-        if not checkpoint or "messages" not in checkpoint:
+        history = self.memory.get(self.thread_id)
+        if not history:
             return []
-        return [f"{getattr(msg, 'type', 'AI')}: {getattr(msg, 'content', str(msg))}" for msg in checkpoint["messages"]]
+        return [f"{msg.type}: {msg.content}" for msg in history["messages"]]
 
     def chat(self, user_input: str):
         logger.info("Received user input: %s", user_input)
