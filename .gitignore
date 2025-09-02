@@ -1,0 +1,57 @@
+.env# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+.env.*
+.venv/
+
+# VSCode settings
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# Python egg metadata and build artifacts
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Test and coverage outputs
+htmlcov/
+.tox/
+.nox/
+.coverage
+coverage.xml
+*.cover
+.cache
+pytest_cache/
+
+# Roadmap and documentation drafts
+RoadMap.md
+
+# Logs
+*.log
+
+# mypy
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# pyright
+.pyright/
+
+# Backup directory
+backup/
+
+.idea/
+
+/archives/demo_agent.py
+/archives/langchain_agent.py
+/archives/

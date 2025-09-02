@@ -1,0 +1,19 @@
+python-dotenv
+kubernetes
+azure-identity
+azure-mgmt-resource
+azure-mgmt-containerservice
+azure-mgmt-web
+azure-monitor-query
+pyyaml
+tiktoken
+fastapi
+black
+# LangChain dependencies
+openai
+langchain
+langchain-core
+langchain-openai
+langgraph
+# langchain-tavily
+pydantic
