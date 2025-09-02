@@ -10,8 +10,8 @@ from langchain.chains.summarize import load_summarize_chain
 from tiktoken import encoding_for_model
 
 from ..core.openai_client import get_openai_llm
-from ..tools.logging_tools import LoggingTools
-from ..tools.function_app_tools import FunctionAppTool
+from ..tools.logging_tools import get_application_logs
+from ..tools.function_app_tools import list_function_apps, function_app_details
 
 from ..models import Environment
 
@@ -34,14 +34,11 @@ class AzureHubLoggingAgent:
         self.llm = get_openai_llm()
         self.summarizer_llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo")
 
-        # Create tool instances with environment
-        logging_tools = LoggingTools(self.environment)
-        function_app_tools = FunctionAppTool(self.environment)
-
+        # Define tools for agent
         self.tools = [
-            logging_tools.get_application_logs,
-            function_app_tools.list_function_apps,
-            function_app_tools.function_app_details,
+            get_application_logs,
+            list_function_apps,
+            function_app_details,
         ]
 
         self.react_prompt = hub.pull("hwchase17/react")
@@ -85,14 +82,10 @@ class AzureHubLoggingAgent:
 
     def _call_agent(self, state: MessagesState):
         logger.info("Calling agent with %d messages", len(state["messages"]))
-        # Inject environment into every tool call
+        # Use the messages directly without environment injection
         input_messages = state["messages"]
-        # Wrap the input so that every tool gets environment
-        # This assumes the agent expects a dict with 'input' as messages
-        # and will pass environment to all tools
         response = self.agent_executor.invoke({
-            "input": input_messages,
-            "environment": self.environment
+            "input": input_messages[-1].content if input_messages else ""
         })
         output = response.get("output", "").strip()
         logger.info("Agent response: %s", output[:100])
